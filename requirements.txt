@@ -1,0 +1,6 @@
+#streamlit 
+pandas 
+sklearn 
+#scikitlearn
+matplotlib
+numpy 
