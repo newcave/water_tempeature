@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -21,9 +21,12 @@ df = pd.DataFrame(data)
 
 st.title('Linear Regression Model')
 
-# 사이드바에서 학습 및 테스트 섅트 비율 선택
+# 사이드바에서 학습 및 테스트 세트 비율 선택
 test_sizes = [i / 10 for i in range(1, 10)]
 test_size = st.sidebar.selectbox('Select Test Set Size', options=test_sizes)
+
+# 선택한 지표를 확인
+selected_metric = st.sidebar.radio('Select Metric', ('RMSE', 'MSE', 'MAE'))
 
 # Features(특징) 및 Target(목표) 데이터 설정
 features = ['rainfall', '기온', '구름의양']
@@ -42,9 +45,16 @@ model.fit(X_train, y_train)
 # 테스트 데이터에 대한 예측
 predictions = model.predict(X_test)
 
-# 모델 성능 측정
-mse = mean_squared_error(y_test, predictions)
-st.write(f"Mean Squared Error: {mse}")
+# 선택한 지표에 따른 결과 계산
+if selected_metric == 'RMSE':
+    result = mean_squared_error(y_test, predictions, squared=False)
+elif selected_metric == 'MSE':
+    result = mean_squared_error(y_test, predictions)
+else:
+    result = mean_absolute_error(y_test, predictions)
+
+# 결과 출력
+st.write(f"{selected_metric}: {result}")
 
 # 그래프 생성
 fig, ax = plt.subplots()
